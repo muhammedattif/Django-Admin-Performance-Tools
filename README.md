@@ -190,6 +190,11 @@ class TemplateAction(TemplateViewQuickAction):
 
 ```bash
 {% extends 'admin/quick_actions/base_quick_action.html' %}
+
+{% block action_body %}
+    <h1>{{action.get_name}}</h1>
+    # Write your own HTML 
+{% endblock %}
 ```
 
 ## 4.3- Abstract QuickAction
@@ -208,15 +213,19 @@ class CustomAction(QuickAction):
 
     def get(self, request, *args, **kwargs):
         # Write your own logic here
+        return super().get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
         # Write your own logic here
+        return super().post(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
         # Write your own logic here
+        return super().put(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         # Write your own logic here
+        return super().delete(request, *args, **kwargs)
     
     def get_context_data(self, **kwargs):
         super().get_context_data(**kwargs)
@@ -226,7 +235,7 @@ class CustomAction(QuickAction):
         }
 ```
 
-You can override `get_context_data()` function to pass extra context values on creating a custom actions
+You can override `get_context_data()` function to pass extra context values
 
 
 ## 4.4- Control who can see the actions
