@@ -1,0 +1,33 @@
+{% extends 'admin/quick_actions/base_quick_action.html' %}
+{% load i18n %}
+
+{% block action_body %}
+    <h1>{{action.get_name}}</h1>
+    <form id="multiform" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ wizard.form.media }}
+        {{ wizard.management_form }}
+        {% if wizard.form.forms %}
+            {{ wizard.form.management_form }}
+            {% for form in wizard.form.forms %}
+                {{ form.as_p }}
+            {% endfor %}
+        {% else %}
+            {{ wizard.form.as_p }}
+        {% endif %}
+        
+        <div class="submit-row">
+            {% if wizard.steps.prev %}
+                <button class="default button" style="padding:10px 15px" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% translate "Previous" %}</button>
+            {% endif %}
+            
+            {% if wizard.steps.next %}
+                <button class="default button" style="padding:10px 15px" name="submit" type="submit">{% translate "Next" %}</button>
+            {% endif %}
+
+            {% if not wizard.steps.next %}
+                <button class="default button" style="padding:10px 15px" name="submit" type="submit">{{submit_button_value}}</button>      
+            {% endif %}
+        </div>
+    </form>
+{% endblock %}

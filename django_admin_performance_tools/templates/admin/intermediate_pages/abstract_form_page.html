@@ -1,0 +1,46 @@
+{% extends "admin/intermediate_pages/base.html" %}
+{% load i18n admin_urls %}
+
+{% block breadcrumbs_last %}{{ title }}{% endblock %}
+
+{% block container %}
+    {% block content %}
+
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!--  Render django form  -->
+            <strong>{{ form.non_field_errors }}</strong>
+            <fieldset class="module aligned">
+                {% for field in form.visible_fields %}
+                    <div class="form-row">
+                        <div>
+                            {{ field.errors }}
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {% if field.field.help_text %}<div class="help">{{ field.field.help_text|safe }}</div>{% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </fieldset>
+
+            <!--  Render the list of selected objects on the previous step  -->
+            {% if items %}
+                <h3>Selected Instances:</h3>
+                <ul>
+                    {% for item in items %}
+                        <li>
+                            <a href="{% url opts|admin_urlname:'changelist' %}{{ item.id }}/change">{{ item }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <!--  Hidden params -->
+            {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+            <input type="hidden" name="action" value={{ action_name }} />
+
+            <!--  Submit  -->
+            <input type="submit" name="apply" value={% trans "Submit" %} />
+        </form>
+    {% endblock %}
+{% endblock %}

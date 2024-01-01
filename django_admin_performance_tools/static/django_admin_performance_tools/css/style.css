@@ -1,0 +1,90 @@
+#lang-form {
+    display: inline;
+}
+
+.notification-dot {
+    position: relative;
+    top: -10px;
+    right: 10px;
+    border-radius: 100%;
+    background-color: red;
+    padding:4px;
+    font-size: 8px;
+    text-align:center;
+}
+
+.chevron::before {
+    border-style: solid;
+    border-width: 0.25em 0.25em 0 0;
+    content: '';
+    display: inline-block;
+    height: 0.45em;
+    left: 0.15em;
+    position: relative;
+    top: 0.15em;
+    transform: rotate(-45deg);
+    vertical-align: top;
+    width: 0.45em;
+    transition: transform 0.2s;
+    margin-right: 5px;
+    left: 0;
+    transform: rotate(45deg);
+}
+
+.chevron.open:before {
+    top: 0;
+    transform: rotate(135deg);
+}
+
+.admindatefilter {
+    overflow: hidden;
+}
+
+@media (prefers-color-scheme: dark) {
+    .select2-dropdown {
+        background: var(--body-bg) !important;
+    }
+
+    .select2-container--default .select2-selection--single,
+    .select2-container--default .select2-selection--multiple {
+        background-color: var(--body-bg) !important;
+        border: 1px solid var(--border-color) !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered,
+    .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+        color: var(--body-fg) !important;
+    }
+
+    .select2-container--default .select2-search--dropdown .select2-search__field {
+        background-color: var(--body-bg) !important;
+        border: 1px solid var(--border-color) !important;
+        color: var(--body-fg) !important;
+
+    }
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        background-color: var(--body-bg) !important;
+        color: var(--body-fg) !important;
+    }
+}
+
+
+.inline-related.tabular fieldset.module table {
+    white-space: nowrap;
+}
+
+#content.colM td.original.is-sortable .djn-drag-handler {
+    position: initial !important;
+}
+
+.inline-group .tabular fieldset.module {
+    display: grid;
+    overflow-x: auto;
+    overflow-y: hidden;
+
+}
+
+select+span+.related-widget-wrapper-link {
+    margin-left: 7px;
+}

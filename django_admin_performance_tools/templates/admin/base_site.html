@@ -1,0 +1,48 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_utils %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" type="text/css" href="{% static 'django_admin_performance_tools/css/style.css' %}"/>
+{% endblock %}
+
+
+{% block userlinks %}
+    {{ block.super }}
+
+    {% if is_language_dropdown_visible %}
+        <form action="{% url 'set_language' %}" method="POST" id="lang-form">
+            {% csrf_token %}
+            <input name="next" type="hidden" value="{{ redirect_to }}"/>
+            <select name="language" onchange="this.form.submit()">
+                {% get_current_language as LANGUAGE_CODE %}
+                {% get_available_languages as LANGUAGES %}
+                {% get_language_info_list for LANGUAGES as languages %}
+                {% for language in languages %}
+                    <option value="{{ language.code }}"
+                            {% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                        {{ language.name_local }}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+    {% endif %}
+    
+    {% if is_quick_actions_dropdown_visible %}
+        <select name="quick_actions" onchange="location=this.value">
+            <option disabled selected> Quick Actions </option>
+            {% actions_list request name as quick_actions_list %}
+            {% for action in quick_actions_list%}
+            {% build_admin_url action.get_path_name as action_url%}
+            <option value="{% url action_url %}">
+                {{action.get_name}}</a>
+            </option>
+            {% endfor %}
+        </select>
+    {% endif %}
+
+{% endblock %}
+
+
+{% block footer %}
+    <script src="{% static 'django_admin_performance_tools/js/script.js' %}"></script>
+{% endblock %}

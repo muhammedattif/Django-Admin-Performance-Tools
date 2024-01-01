@@ -1,0 +1,6 @@
+asgiref==3.7.2
+backports.zoneinfo==0.2.1
+Django==4.2.8
+django-admin-autocomplete-filter==0.7.1
+sqlparse==0.4.4
+typing-extensions==4.9.0

@@ -1,0 +1,1 @@
+from .staff_permission_mixin import StafUserPermissionRequiredMixin

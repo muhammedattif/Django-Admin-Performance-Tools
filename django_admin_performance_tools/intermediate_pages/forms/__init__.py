@@ -1,0 +1,2 @@
+from .intermediate_page_form import IntermediatePageForm
+from .intermediate_page_model_form import IntermediatePageModelForm

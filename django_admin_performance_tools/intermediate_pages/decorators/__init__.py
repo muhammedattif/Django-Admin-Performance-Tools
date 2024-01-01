@@ -1,0 +1,1 @@
+from .intermediate_page_decorator import intermediate_page

@@ -1,0 +1,46 @@
+{% extends 'admin/base_site.html' %}
+{% load i18n static admin_utils %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static "admin/css/forms.css" %}">{% endblock %}
+
+{% block title %}{{action.get_name}}{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+{% build_admin_url action.get_path_name as action_url%}
+&rsaquo; <a href={% url action_url %}>{{action.get_name}}</a>
+</div>
+{% endblock %}
+
+{% block content %}
+    <div id="content-main">
+        {% block action_body %}
+        {% endblock%}
+    </div>
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+<script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+{{ form.media }}
+<script>
+(function($) {
+    $('#add-form').click(function() {
+        var index = $('#id_inline_test_models-TOTAL_FORMS').val()
+        var newTable = $('#id_inline_test_models-__prefix__-DELETE').parents('table').clone()
+        newTable.find(':input').each(function() {
+            for (attr of ['name', 'id'])
+                $(this).attr(
+                    attr,
+                    $(this).attr(attr).replace('__prefix__', index)
+                )
+        })
+        newTable.insertBefore($(this))
+        $('#id_inline_test_models-TOTAL_FORMS').val(
+            parseInt($('#id_inline_test_models-TOTAL_FORMS').val()) + 1
+        )
+        newTable.slideDown()
+    })
+})($)
+</script>
+{% endblock %}

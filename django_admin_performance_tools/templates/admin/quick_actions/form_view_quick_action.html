@@ -1,0 +1,23 @@
+{% extends 'admin/quick_actions/base_quick_action.html' %}
+
+{% block action_body %}
+    <h1>{{action.get_name}}</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <fieldset class="module aligned wide">
+            {% for field in form %}
+                <strong>{{ form.non_field_errors }}</strong>
+                <div class="form-row">
+                    {{ field.errors }}
+                    <div class="flex-container">{{ field.label_tag }} {{ field }}</div>
+                    {% if field.help_text %}
+                    <div class="help"{% if field.id_for_label %} id="{{ field.id_for_label }}_helptext"{% endif %}>{{ field.help_text|safe }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </fieldset>
+
+    <div class="submit-row">
+        <input type="submit" value="{{submit_button_value}}" class="default">
+    </div>
+{% endblock %}

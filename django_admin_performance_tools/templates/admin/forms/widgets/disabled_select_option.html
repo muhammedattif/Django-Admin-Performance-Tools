@@ -1,0 +1,1 @@
+<option {% if widget.value in disabled_options %} disabled {% endif %} value="{{ widget.value|stringformat:'s' }}"{% include "django/forms/widgets/attrs.html" %}>{{ widget.label }}</option>
