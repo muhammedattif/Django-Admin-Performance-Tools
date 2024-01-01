@@ -1,4 +1,3 @@
-# Django Imports
 from .mixins import (
     AdminChangeSelectRelatedMixin,
     InlineChangeSelectRelatedMixin,

@@ -1,12 +1,12 @@
 # Python Standard Library Imports
 from re import sub
-from django.contrib import messages
 
 # Django Imports
-from django.views.generic.edit import FormView
-from django.views.generic.base import View, TemplateView
-from django.urls import reverse_lazy
+from django.contrib import messages
 from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.views.generic.base import TemplateView, View
+from django.views.generic.edit import FormView
 
 # First Party Imports
 from django_admin_performance_tools.permissions import StafUserPermissionRequiredMixin
@@ -33,7 +33,7 @@ class BaseAction(StafUserPermissionRequiredMixin):
         if success_message:
             messages.success(request=request, message=success_message)
         return super().put(request, *args, **kwargs)
-    
+
     def delete(self, request, *args, **kwargs):
         success_message = self.get_delete_success_message()
         if success_message:
@@ -76,7 +76,7 @@ class BaseAction(StafUserPermissionRequiredMixin):
 
     def get_put_success_message(self):
         return self.put_success_message
-    
+
     def get_delete_success_message(self):
         return self.delete_success_message
 
@@ -87,25 +87,26 @@ class QuickAction(BaseAction, View):
 
 class TemplateViewQuickAction(BaseAction, TemplateView):
     """An action class to be inherited when initializing an action to render a template"""
-    
-    
+
+
 class AbstractFormViewQuickAction(BaseAction):
     """An abstract class for form actions"""
 
     submit_button_value = "Go"
     success_url = None
-    
+
     def get_success_url(self) -> str:
         if self.success_url:
             return self.success_url
         return reverse_lazy("admin:{0}".format(self.path_name))
-    
+
     def get_context_data(self, **kwargs):
         super().get_context_data(**kwargs)
         return {
             "submit_button_value": self.__class__.submit_button_value,
             **super().get_context_data(**kwargs),
         }
+
 
 class FormViewQuickAction(AbstractFormViewQuickAction, FormView):
     """An action class to be inherited when initializing an action to render a form"""
@@ -115,8 +116,9 @@ class FormViewQuickAction(AbstractFormViewQuickAction, FormView):
 
 class WizardFormViewQuickAction(AbstractFormViewQuickAction):
     """An action class to be inherited when initializing an action to render a wizard forms"""
+
     template_name = "admin/quick_actions/wizard_form_view_quick_action.html"
-    
+
     def done(self, form_list, **kwargs):
         success_message = self.get_post_success_message()
         if success_message:

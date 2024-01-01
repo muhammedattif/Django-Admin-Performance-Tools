@@ -5,7 +5,6 @@ from functools import update_wrapper
 from django.contrib.admin import AdminSite
 from django.contrib.admin.apps import AdminConfig
 from django.urls import path
-from django.utils.translation import gettext_lazy as _
 
 
 class AbstractAdminSite(AdminSite):
@@ -16,8 +15,9 @@ class AbstractAdminSite(AdminSite):
         context["name"] = self.name
         return context
 
-    def get_urls(self):        
-        
+    def get_urls(self):
+
+        # First Party Imports
         from django_admin_performance_tools.quick_actions.registry import _registry
 
         def wrap(view, cacheable=False):

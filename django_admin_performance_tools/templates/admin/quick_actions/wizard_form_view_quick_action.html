@@ -15,18 +15,18 @@
         {% else %}
             {{ wizard.form.as_p }}
         {% endif %}
-        
+
         <div class="submit-row">
             {% if wizard.steps.prev %}
                 <button class="default button" style="padding:10px 15px" name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% translate "Previous" %}</button>
             {% endif %}
-            
+
             {% if wizard.steps.next %}
                 <button class="default button" style="padding:10px 15px" name="submit" type="submit">{% translate "Next" %}</button>
             {% endif %}
 
             {% if not wizard.steps.next %}
-                <button class="default button" style="padding:10px 15px" name="submit" type="submit">{{submit_button_value}}</button>      
+                <button class="default button" style="padding:10px 15px" name="submit" type="submit">{{submit_button_value}}</button>
             {% endif %}
         </div>
     </form>

@@ -4,8 +4,11 @@ import itertools
 # Django Imports
 from django.core.exceptions import ImproperlyConfigured
 
-from .base_actions import BaseAction
+# First Party Imports
 from django_admin_performance_tools.settings import HIDE_QUICK_ACTIONS_DROPDOWN
+
+from .base_actions import BaseAction
+
 NON_SITE = "_non_site"
 
 
@@ -58,7 +61,7 @@ def register_quick_action(sites=[]):
     def _action_wrapper(action_class):
         if not issubclass(action_class, BaseAction):
             raise ImproperlyConfigured("{0} Class must subclass BaseAction".format(action_class.__name__))
-        
+
         if not HIDE_QUICK_ACTIONS_DROPDOWN:
             _registry.register(action_class=action_class, sites=sites)
         return action_class

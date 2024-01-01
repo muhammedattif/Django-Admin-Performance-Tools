@@ -72,4 +72,3 @@ def is_changelist_page(request: HttpRequest) -> bool:
         bool: True if changelist, false if not
     """
     return request.resolver_match.view_name.endswith("changelist")
-

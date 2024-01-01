@@ -33,7 +33,7 @@ This Package is a collection of extensions/tools for the default django administ
 # 2- Requirements
 Before you begin, ensure you have met the following requirements:
 * Python 3.8+
-* Django >= 3.2 
+* Django >= 3.2
 
 ---
 
@@ -100,7 +100,7 @@ TEMPLATES = [
 
 ## 4.1- FormViewQuickAction
 
-Form View Quick Action is used to create an action to render a form (It is implemented on top of django FormView) 
+Form View Quick Action is used to create an action to render a form (It is implemented on top of django FormView)
 
 **Example:**
 
@@ -117,7 +117,7 @@ class FormAction(FormViewQuickAction):
 -To customize submit button name, you can set `submit_button_value` attribute in the `FormAction` class
 
 -To customize success redirection of the form you can set `success_url` attribute or override `get_success_url` function.
- 
+
 
 ## 4.1- WizardFormViewQuickAction
 
@@ -151,7 +151,7 @@ from django_admin_performance_tools.quick_actions.registry import register_quick
 class WizardFormAction(WizardFormViewQuickAction, SessionWizardView):
     name = "My Wizard Form Action"
     form_list = [Form1, Form2, Form3]
-    
+
     def done(self, form_list, **kwargs):
         # form_list[0].cleaned_data
         # form_list[1].cleaned_data
@@ -170,7 +170,7 @@ And that is it
 
 ## 4.2- TemplateViewQuickAction
 
-Template View Quick Action is used to create an action to render a template (It is implemented on top of django TemplateView) 
+Template View Quick Action is used to create an action to render a template (It is implemented on top of django TemplateView)
 
 **Example:**
 
@@ -193,13 +193,13 @@ class TemplateAction(TemplateViewQuickAction):
 
 {% block action_body %}
     <h1>{{action.get_name}}</h1>
-    # Write your own HTML 
+    # Write your own HTML
 {% endblock %}
 ```
 
 ## 4.3- Abstract QuickAction
 
-QuickAction is used to create a custom action, that means you will've to implement `get()`, `post()`, `put()`, or `delete()` yourself (It is implemented on top of django View) 
+QuickAction is used to create a custom action, that means you will've to implement `get()`, `post()`, `put()`, or `delete()` yourself (It is implemented on top of django View)
 
 **Example:**
 
@@ -214,7 +214,7 @@ class CustomAction(QuickAction):
     def get(self, request, *args, **kwargs):
         # Write your own logic here
         return super().get(request, *args, **kwargs)
-    
+
     def post(self, request, *args, **kwargs):
         # Write your own logic here
         return super().post(request, *args, **kwargs)
@@ -226,7 +226,7 @@ class CustomAction(QuickAction):
     def delete(self, request, *args, **kwargs):
         # Write your own logic here
         return super().delete(request, *args, **kwargs)
-    
+
     def get_context_data(self, **kwargs):
         super().get_context_data(**kwargs)
         return {
@@ -307,17 +307,17 @@ class TemplateAction(TemplateViewQuickAction):
     post_success_message = "Data Submitted Successfully"
     put_success_message = "object Updated Successfully"
     delete_success_message = "object Deleted!"
-    
+
     # NOTE: Also you can override the messages using the following methods
     # You can access the current request by using self.request
     def get_post_success_message(self):
         # Write your own logic here
-        
+
     def get_put_success_message(self):
         # Write your own logic here
-    
+
     def get_delete_success_message(self):
-        # Write your own logic here        
+        # Write your own logic here
 ```
 
 ---
@@ -333,7 +333,7 @@ This will show a dropdown menu in the admin pages that allows you change the sit
 
 **Setup**
 
-in the root `urls.py` add the following: 
+in the root `urls.py` add the following:
 
 ```python
 from django.urls import include, path
@@ -384,9 +384,9 @@ class MyForm(IntermediatePageForm):
 
 @admin.register(MyModel)
 class MyModelAdmin(admin.ModelAdmin):
-    
+
     actions = ["assign_user"]
-    
+
     @intermediate_page(form=MyForm)
     def assign_user(self, request, queryset):
         user = request.data.get("user")
@@ -419,7 +419,7 @@ from .models import MyModel
 
 @admin.register(MyModel)
 class MyModelAdmin(NonSelectionActionsMixin, admin.ModelAdmin):
-    
+
     actions = ["assign_user"]
     non_selection_actions = ["assign_user"]
 
@@ -429,7 +429,7 @@ class MyModelAdmin(NonSelectionActionsMixin, admin.ModelAdmin):
 
 ## 6.3- Max Selection Count
 
-The existing Django actions allows all staff users to select all the queryset and apply the action on it, imagine you have a 1 Million records and a staff user selected all the queryset and applied the action on it! 
+The existing Django actions allows all staff users to select all the queryset and apply the action on it, imagine you have a 1 Million records and a staff user selected all the queryset and applied the action on it!
 
 So ,We introduced `Max Selection Count` to set max instances to be selected to an action.
 
@@ -444,7 +444,7 @@ from .models import MyModel
 
 @admin.register(MyModel)
 class MyModelAdmin(admin.ModelAdmin):
-    
+
     actions = ["assign_user"]
 
     @check_queryset_max_selection(max_selection=100)
@@ -544,7 +544,7 @@ class AnotherModelInline(ReadonlySelectRelatedMixin, admin.StackedInline):
 
 @admin.register(MyModel)
 class MyModelAdmin(ReadonlySelectRelatedMixin, admin.ModelAdmin):
-    
+
     inlines = [AnotherModelInline]
     redaonly_fields = [
         "related_field_1",
@@ -573,7 +573,7 @@ from django.contrin.auth.models import User
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    
+
     list_display = [
         "name",
         "email,
@@ -601,7 +601,7 @@ from django_admin_performance_tools.mixins import ListPrefetchRelatedMixin
 
 @admin.register(User)
 class UserAdmin(ListPrefetchRelatedMixin, admin.ModelAdmin):
-    
+
     list_display = [
         "name",
         "email,
@@ -635,7 +635,7 @@ class AnotherModel(models.Model):
 
     name = models.CharField()
     user = models.ForeignKey(User)
-    
+
     def __str__(self):
         return f"{self.name} User: {self.user.username}"
 
@@ -647,7 +647,7 @@ class MyModel(models.Model):
 
 @admin.register(MyModel)
 class MyModelAdmin(admin.ModelAdmin):
-    
+
     fields = [
         "name",
         "another_model"
@@ -670,7 +670,7 @@ class AnotherModel(models.Model):
 
     name = models.CharField()
     user = models.ForeignKey(User)
-    
+
     def __str__(self):
         return f"{self.name} User: {self.user.username}"
 
@@ -682,7 +682,7 @@ class MyModel(models.Model):
 
 @admin.register(MyModel)
 class MyModelAdmin(AdminChangeSelectRelatedMixin, admin.ModelAdmin):
-    
+
     fields = [
         "name",
         "another_model"
@@ -724,7 +724,7 @@ class AnotherModel(models.Model):
 
     name = models.CharField()
     user = models.ForeignKey(User)
-    
+
     def __str__(self):
         return f"{self.name} User: {self.user.username}"
 
@@ -736,7 +736,7 @@ class MyModel(models.Model):
 
 @admin.register(MyModel)
 class MyModelAdmin(AdminChangeSelectRelatedMixin, admin.ModelAdmin):
-    
+
     list_filter = [
         "another_model"
     ]
@@ -758,7 +758,7 @@ class AnotherModel(models.Model):
 
     name = models.CharField()
     user = models.ForeignKey(User)
-    
+
     def __str__(self):
         return f"{self.name} User: {self.user.username}"
 
@@ -775,7 +775,7 @@ class AnotherModelFilter(FilterWithSelectRelated):
 
 @admin.register(MyModel)
 class MyModelAdmin(AdminChangeSelectRelatedMixin, admin.ModelAdmin):
-    
+
     list_filter = [
         AnotherModelFilter
     ]
@@ -798,7 +798,7 @@ from django_admin_performance_tools.mixins import SearchHelpTextMixin
 
 @admin.register(User)
 class UserAdmin(SearchHelpTextMixin, admin.ModelAdmin):
-    
+
     search_fields = [
         "email",
         "name",
@@ -820,7 +820,7 @@ from django_admin_performance_tools.mixins import SearchHelpTextMixin
 
 @admin.register(User)
 class UserAdmin(SearchHelpTextMixin, admin.ModelAdmin):
-    
+
     search_fields = [
         "email",
         "name",
@@ -855,7 +855,7 @@ can be imported from the following path:
 
 ```python
 from django_admin_performance_tools.admin import (
-    AbstractStackedInline, 
+    AbstractStackedInline,
     AbstractTabularInline
 )
 ```

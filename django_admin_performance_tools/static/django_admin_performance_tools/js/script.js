@@ -33,7 +33,7 @@ if (typeof django != "undefined")
             this.init(filterEl, renderArrowSpan);
         }
         ListFilterCollapse.prototype = ListFilterCollapsePrototype;
-        
+
         $(document).ready(function () {
             $('#changelist-filter').children('h3:not(#changelist-filter-clear)').each(function () {
                 new ListFilterCollapse(this, true);

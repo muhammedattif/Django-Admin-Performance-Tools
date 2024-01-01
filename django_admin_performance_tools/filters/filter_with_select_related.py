@@ -1,5 +1,6 @@
 # Django Imports
 
+# Django Imports
 from django.contrib import admin
 
 
@@ -11,4 +12,3 @@ class FilterWithSelectRelated(admin.RelatedFieldListFilter):
 
     def get_queryset(self, field):
         return field.remote_field.model._default_manager.select_related(*self.list_select_related)
-

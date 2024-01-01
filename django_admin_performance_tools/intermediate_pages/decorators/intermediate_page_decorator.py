@@ -17,7 +17,11 @@ def intermediate_page(form, template="admin/intermediate_pages/abstract_form_pag
             action_func, action_name, template_title = self.get_action(func)
 
             if request.POST.get("apply", None):  # form submitted
-                template_form = form(request.POST, request.FILES, initial={"_selected_action": queryset.values_list("id", flat=True)})
+                template_form = form(
+                    request.POST,
+                    request.FILES,
+                    initial={"_selected_action": queryset.values_list("id", flat=True)},
+                )
                 if template_form.is_valid():
                     setattr(request, "data", template_form.cleaned_data)
                     result = action_func(self, request, queryset)

@@ -5,7 +5,7 @@ register = template.Library()
 
 # First Party Imports
 from django_admin_performance_tools.quick_actions.registry import _registry
-from django.utils.module_loading import import_string
+
 
 @register.simple_tag
 def actions_list(request, name):
@@ -17,6 +17,7 @@ def actions_list(request, name):
         if action.has_permission():
             allowed_actions.append(action)
     return allowed_actions
+
 
 @register.simple_tag
 def build_admin_url(value):

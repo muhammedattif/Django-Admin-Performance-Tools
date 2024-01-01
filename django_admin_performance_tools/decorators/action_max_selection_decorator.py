@@ -1,5 +1,4 @@
 # Python Standard Library Imports
-from functools import wraps
 
 # Django Imports
 from django.contrib import messages
@@ -15,4 +14,5 @@ def check_queryset_max_selection(max_selection):
             return func(self, request, queryset)
 
         return _wrapped_action
+
     return _wrapper
