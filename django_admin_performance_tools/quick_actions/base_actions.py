@@ -5,6 +5,7 @@ from re import sub
 from django.views.generic.edit import FormView
 from django.views.generic.base import View, TemplateView
 from django.urls import reverse_lazy
+from django.shortcuts import redirect
 
 # First Party Imports
 from django_admin_performance_tools.permissions import StafUserPermissionRequiredMixin
@@ -61,7 +62,13 @@ class AbstractFormViewQuickAction(BaseAction):
     """An abstract class for form actions"""
 
     submit_button_value = "Go"
-
+    success_url = None
+    
+    def get_success_url(self) -> str:
+        if self.success_url:
+            return self.success_url
+        return reverse_lazy("admin:{0}".format(self.path_name))
+    
     def get_context_data(self, **kwargs):
         super().get_context_data(**kwargs)
         return {
@@ -74,10 +81,10 @@ class FormViewQuickAction(AbstractFormViewQuickAction, FormView):
 
     template_name = "admin/quick_actions/form_view_quick_action.html"
 
-    def get_success_url(self) -> str:
-        return reverse_lazy("admin:{0}".format(self.path_name))
 
-
-class WizardViewQuickAction(AbstractFormViewQuickAction):
+class WizardFormViewQuickAction(AbstractFormViewQuickAction):
     """An action class to be inherited when initializing an action to render a wizard forms"""
     template_name = "admin/quick_actions/wizard_form_view_quick_action.html"
+    
+    def done(self, form_list, **kwargs):
+        return redirect(self.get_success_url())

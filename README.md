@@ -13,7 +13,8 @@
 - [Intermediate Pages and Model Action Tools](#6--intermediate-pages-and-model-action-tools)
 - [Tools for admin Querysets/Filters](#7--tools-for-admin-querysets-and-filters-optemization)
 - [Tools for admin search/filters](#8--tools-for-admin-search-and-filters)
-- [Settings](#9--Settings)
+- [Widgets](#9--widgets)
+- [Settings](#10--Settings)
 
 # 1- Description
 
@@ -126,6 +127,55 @@ class FormAction(FormViewQuickAction):
 -To customize success redirection of the form you can set `success_url` attribute or override `get_success_url` function.
  
 
+## 4.1- WizardFormViewQuickAction
+
+Wizard Form View Quick Action is implemented on top of [django-formtools][django-formtools] library, and it is used to create an action to render a wizard form.
+
+**setup**
+
+`django-formtools` library is required. to install it use the following pip command:
+
+```bash
+pip install django-formtools
+```
+
+Add 'formtools' to your INSTALLED_APPS settings.
+```python
+INSTALLED_APPS = [
+    ...
+    "formtools",
+]
+```
+
+**Example:**
+
+```python
+from formtools.wizard.views import SessionWizardView
+
+from django_admin_performance_tools.quick_actions import WizardFormViewQuickAction
+from django_admin_performance_tools.quick_actions.registry import register_quick_action
+
+@register_quick_action()
+class WizardFormAction(WizardFormViewQuickAction, SessionWizardView):
+    name = "My Wizard Form Action"
+    form_list = [Form1, Form2, Form3]
+    
+    def done(self, form_list, **kwargs):
+        # form_list[0].cleaned_data
+        # form_list[1].cleaned_data
+        # form_list[2].cleaned_data
+        # Continue writing your logic here
+        return super().done(form_list, **kwargs)
+```
+
+And that is it
+
+![Alt text](/docs/images/wizard_actions.gif?raw=true "Wizard Actions")
+
+-To customize last step button name, you can set `submit_button_value` attribute in the `WizardFormAction` class
+
+-To customize `done()` function redirection you can set `success_url` attribute or override `get_success_url` function.
+
 ## 4.2- TemplateViewQuickAction
 
 Template View Quick Action is used to create an action to render a template (It is implemented on top of django TemplateView) 
@@ -208,6 +258,29 @@ class TemplateAction(TemplateViewQuickAction):
 ```
 
 Quck actions by default check the `is_active=True` and `is_staff=True` thats why you must call `super().has_permission()` on overriding `has_permission()` function.
+
+## 4.5- Register Quick Actions to Multiple Admin Sites
+
+`@register_quick_action()` decorator register the action to all defained admin sites, so if you need to register an action to a specific site you can pass `sites=[site1, site2, site3]` to the decorator
+
+**Example:**
+
+```python
+from django.contrib import admin
+
+from django_admin_performance_tools.quick_actions import TemplateViewQuickAction
+from django_admin_performance_tools.quick_actions.registry import register_quick_action
+from .my_sites import site2, site3
+
+@register_quick_action(sites=[admin.site, site2, site3])
+class TemplateAction(TemplateViewQuickAction):
+    name = "My Template Action"
+    template_name = "my_template.html"
+
+    def has_permission(self):
+        # Write your own logic here
+        return super().has_permission()
+```
 
 ---
 **Notes**
@@ -327,7 +400,7 @@ So ,We introduced `Max Selection Count` to set max instances to be selected to a
 ```python
 from django.contrib import admin
 
-from django_admin_performance_tools.decorators import check_queryset_max_selection_count
+from django_admin_performance_tools.decorators import check_queryset_max_selection
 
 from .models import MyModel
 
@@ -336,7 +409,7 @@ class MyModelAdmin(admin.ModelAdmin):
     
     actions = ["assign_user"]
 
-    @check_queryset_max_selection_count(max_count=100)
+    @check_queryset_max_selection(max_selection=100)
     def assign_user(self, request, queryset):
         # Write your own Logic
 ```
@@ -594,11 +667,88 @@ class AnotherModelInline(InlineChangeSelectRelatedMixin, admin.StackedInline):
 
 # 8- Tools for admin search and filters
 
-## 8.1 Search Help Text
+## 8.1 Select Related with Filter Related Fields
+
+Same as forms dropdowns, related filters get a list of instances and display its `__str__` function so if you access a related field  in the `__str__ ` it will hit the DB for each row in the related filter choices list.
+
+
+So, We introduce `FilterWithSelectRelated` to select all related fields while rendering the filter choices
+
+**Example:**
+
+```python
+from django.contrib import admin
+from django.contrin.auth.models import User
+from .models import MyModel, AnotherModel
+
+
+class AnotherModel(models.Model):
+
+    name = models.CharField()
+    user = models.ForeignKey(User)
+    
+    def __str__(self):
+        return f"{self.name} User: {self.user.username}"
+
+
+class MyModel(models.Model):
+
+    name = models.CharField()
+    another_model = models.ForeignKey(AnotherModel)
+
+@admin.register(MyModel)
+class MyModelAdmin(AdminChangeSelectRelatedMixin, admin.ModelAdmin):
+    
+    list_filter = [
+        "another_model"
+    ]
+```
+
+in the previous example, if we've 100 choice in the `another_model` filter list, it means that we've hit the DB 100 times, but by using `FilterWithSelectRelated` we can select `user` while rendering the choices.
+
+
+**Example:**
+
+```python
+from django.contrib import admin
+from django.contrin.auth.models import User
+from django_admin_performance_tools.mixins import FilterWithSelectRelated
+from .models import MyModel, AnotherModel
+
+
+class AnotherModel(models.Model):
+
+    name = models.CharField()
+    user = models.ForeignKey(User)
+    
+    def __str__(self):
+        return f"{self.name} User: {self.user.username}"
+
+
+class MyModel(models.Model):
+
+    name = models.CharField()
+    another_model = models.ForeignKey(AnotherModel)
+
+
+class AnotherModelFilter(FilterWithSelectRelated):
+    list_select_related = ["user"]
+
+
+@admin.register(MyModel)
+class MyModelAdmin(AdminChangeSelectRelatedMixin, admin.ModelAdmin):
+    
+    list_filter = [
+        AnotherModelFilter
+    ]
+```
+
+
+## 8.2 Search Help Text
 
 Recently Django featured a new admin attribute `search_help_text` and it adds a help text below the search bar, So we extended this feature to be more useful and readable by showing all the fields that the admin will search in.
 
-![Alt text](/docs/images/search_help_text.png?raw=true "Languages Dropdown")
+![Alt text](/docs/images/search_help_text.png?raw=true "Search Help Text")
 
 **Example:**
 
@@ -644,7 +794,6 @@ class UserAdmin(SearchHelpTextMixin, admin.ModelAdmin):
     }
 ```
 
-
 There is an abstract class to use if you intend to use all the following features in Model Admin:
 
 - ListPrefetchRelatedMixin
@@ -672,8 +821,54 @@ from django_admin_performance_tools.admin import (
     AbstractTabularInline
 )
 ```
+---
 
-# 9- Settings
+# 9- Widgets
+
+Sometimes we may need to disable some choices of choice list fields based on who interacting with the field, for example: a super user can change status field to any choice but the staff user may have a limited options to change the status.
+
+
+![Alt text](/docs/images/disabled_select.gif?raw=true "Search Help Text")
+
+
+**Setup**
+
+add `FORM_RENDERER` in `settings.py`.
+```python
+FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
+```
+
+Add 'django.forms' to your INSTALLED_APPS settings.
+```python
+INSTALLED_APPS = [
+    ...
+    "django.forms",
+]
+```
+
+**Example:**
+
+```python
+
+from django import forms
+from django_admin_performance_tools.widgets import DisabledSelect
+from django.db import models
+
+class StatusEnum(models.IntegerChoices):
+    INITIAL = 0, "Initial"
+    DONE = 1, "Done"
+    CLOSED = 2, "Closed"
+
+class ContactForm1(forms.Form):
+    status = forms.ChoiceField(
+        required=False,
+        choices=StatusEnum.choices,
+        widget=DisabledSelect(disabled_options=[StatusEnum.DONE, StatusEnum.CLOSED])
+    )
+```
+---
+
+# 10- Settings
 
 You can controll some behaves by adding the following in `settings.py`
 
@@ -691,3 +886,4 @@ Default value is `False`
 
 
 [github-repo]: https://github.com/muhammedattif/Django-Admin-Performance-Tools
+[django-formtools]: https://pypi.org/project/django-formtools/

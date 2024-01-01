@@ -1,1 +1,1 @@
-from .action_max_selection_decorator import check_queryset_max_selection_count
+from .action_max_selection_decorator import check_queryset_max_selection
