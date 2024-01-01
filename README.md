@@ -64,6 +64,9 @@ Quick Actions is a new feature that allows you to take actions quickly from the 
 -   Actions acts like views and support all http methods (`POST`, `GET`, `PUT`, `DELETE`)
 -   Support permissions, so you can write your own logic to control who can see the action
 -   Form View Action is introduced to enables you to create an action to render any form (It is implemented on top of django FormView)
+-   Wizard Form View Action is introduced to enables you to create multi-step forms (It is implemented on top of django-formtools)
+-   Template View Action is introduced to enables you to render your own templates
+-   Base View Action is introduced to enables you to create customized actions as you want
 
 **Setup**
 
@@ -82,18 +85,7 @@ in `settings.py` update TEMPLATES
 TEMPLATES = [
     {
         ...
-        'DIRS': ["templates"]
-    },
-]
-```
-
-in `settings.py` update TEMPLATES
-```python
-
-TEMPLATES = [
-    {
-        ...
-        'DIRS': ["templates"]
+        'DIRS': ["templates"],
         'OPTIONS': {
             'context_processors': [
                 ...
@@ -280,6 +272,43 @@ class TemplateAction(TemplateViewQuickAction):
     def has_permission(self):
         # Write your own logic here
         return super().has_permission()
+```
+
+## 4.6- Redirect Success Messages
+
+You can define messges to be displayed to the user after `post()`, `put()`, or `delete()`
+
+- `post_success_message` is used for `post` requests
+- `put_success_message` is used for `put` requests
+- `delete_success_message` is used for `delete` requests
+
+**Example:**
+
+```python
+from django.contrib import admin
+
+from django_admin_performance_tools.quick_actions import TemplateViewQuickAction
+from django_admin_performance_tools.quick_actions.registry import register_quick_action
+from .my_sites import site2, site3
+
+@register_quick_action(sites=[admin.site, site2, site3])
+class TemplateAction(TemplateViewQuickAction):
+    name = "My Template Action"
+    template_name = "my_template.html"
+    post_success_message = "Data Submitted Successfully"
+    put_success_message = "object Updated Successfully"
+    delete_success_message = "object Deleted!"
+    
+    # NOTE: Also you can override the messages using the following methods
+    # You can access the current request by using self.request
+    def get_post_success_message(self):
+        # Write your own logic here
+        
+    def get_put_success_message(self):
+        # Write your own logic here
+    
+    def get_delete_success_message(self):
+        # Write your own logic here        
 ```
 
 ---
