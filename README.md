@@ -100,6 +100,7 @@ INSTALLED_APPS = [
 
 
 ![Alt text](/docs/images/quick_actions_dropdown.gif?raw=true "Quick Actions Dropdown")
+🚀🚀
 
 ## 4.1- FormViewQuickAction
 
@@ -203,7 +204,7 @@ class WizardFormAction(WizardFormViewQuickAction, SessionWizardView):
         return super().done(form_list, **kwargs)
 ```
 
-And that is it
+And that's it 🎉
 
 ![Alt text](/docs/images/wizard_actions.gif?raw=true "Wizard Actions")
 
