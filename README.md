@@ -149,7 +149,7 @@ class MyModelForm(forms.ModelForm):
 
 
 @register_quick_action()
-class CreateFormAction(FormViewQuickAction):
+class CreateFormAction(CreateViewQuickAction):
     name = "My Craete Form Action"
     model = model
     fields = ["name"]
