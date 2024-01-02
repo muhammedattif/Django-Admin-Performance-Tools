@@ -243,7 +243,7 @@ class TemplateAction(TemplateViewQuickAction):
 
 ## 4.5- Abstract QuickAction
 
-QuickAction is used to create a custom action, that means you will've to implement `get()`, `post()`, `put()`, or `delete()` yourself (It is implemented on top of django View)
+QuickAction is used to create a custom action, that means you will've to implement `get()`, `post()` yourself (It is implemented on top of django View)
 
 **Example:**
 
@@ -262,14 +262,6 @@ class CustomAction(QuickAction):
     def post(self, request, *args, **kwargs):
         # Write your own logic here
         return super().post(request, *args, **kwargs)
-
-    def put(self, request, *args, **kwargs):
-        # Write your own logic here
-        return super().put(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        # Write your own logic here
-        return super().delete(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         super().get_context_data(**kwargs)
@@ -329,11 +321,10 @@ class TemplateAction(TemplateViewQuickAction):
 
 ## 4.8- Redirect Success Messages
 
-You can define messges to be displayed to the user after `post()`, `put()`, or `delete()`
+You can define messges to be displayed to the user after form submission
 
-- `post_success_message` is used for `post` requests
-- `put_success_message` is used for `put` requests
-- `delete_success_message` is used for `delete` requests
+- `post_success_message` attribute is used for `post` requests and can
+
 
 **Example:**
 
@@ -349,18 +340,10 @@ class TemplateAction(TemplateViewQuickAction):
     name = "My Template Action"
     template_name = "my_template.html"
     post_success_message = "Data Submitted Successfully"
-    put_success_message = "object Updated Successfully"
-    delete_success_message = "object Deleted!"
 
-    # NOTE: Also you can override the messages using the following methods
+    # NOTE: Also you can override the messages using the following method
     # You can access the current request by using self.request
     def get_post_success_message(self):
-        # Write your own logic here
-
-    def get_put_success_message(self):
-        # Write your own logic here
-
-    def get_delete_success_message(self):
         # Write your own logic here
 ```
 

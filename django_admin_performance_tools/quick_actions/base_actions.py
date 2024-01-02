@@ -20,26 +20,12 @@ class BaseAction(StafUserPermissionRequiredMixin):
     url_path = None
     path_name = None
     post_success_message = None
-    put_success_message = None
-    delete_success_message = None
 
     def post(self, request, *args, **kwargs):
         success_message = self.get_post_success_message()
         if success_message:
             messages.success(request=request, message=success_message)
         return super().post(request, *args, **kwargs)
-
-    def put(self, request, *args, **kwargs):
-        success_message = self.get_put_success_message()
-        if success_message:
-            messages.success(request=request, message=success_message)
-        return super().put(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        success_message = self.get_delete_success_message()
-        if success_message:
-            messages.success(request=request, message=success_message)
-        return super().delete(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         admin_site = self.kwargs["admin_site"]
@@ -74,12 +60,6 @@ class BaseAction(StafUserPermissionRequiredMixin):
 
     def get_post_success_message(self):
         return self.post_success_message
-
-    def get_put_success_message(self):
-        return self.put_success_message
-
-    def get_delete_success_message(self):
-        return self.delete_success_message
 
 
 class QuickAction(BaseAction, View):
