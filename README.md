@@ -135,27 +135,16 @@ Create View Quick Action is used to create an action to render a model form (It 
 **Example:**
 
 ```python
-from django import forms
 from django_admin_performance_tools.quick_actions import CreateViewQuickAction
 from django_admin_performance_tools.quick_actions.registry import register_quick_action
 
 from .models import MyModel
-
-
-class MyModelForm(forms.ModelForm):
-
-    class Meta:
-        model = MyModel
-        fields = "__all__"
-
 
 @register_quick_action()
 class CreateFormAction(CreateViewQuickAction):
     name = "My Craete Form Action"
     model = model
     fields = ["name"]
-    form_class = MyModelForm
-
 ```
 
 -To customize submit button name, you can set `submit_button_value` attribute in the `CreateFormAction` class
@@ -276,7 +265,7 @@ You can override `get_context_data()` function to pass extra context values
 
 ## 4.6- Control who can see the actions
 
-You can override `has_permission()` function to control who can see the actions
+Quick actions acts like views so you can set `permission_required` attribute or override `get_permission_required()`, `has_permission()` methods to control who can see the actions.
 
 **Example:**
 
@@ -288,13 +277,21 @@ from django_admin_performance_tools.quick_actions.registry import register_quick
 class TemplateAction(TemplateViewQuickAction):
     name = "My Template Action"
     template_name = "my_template.html"
+    permission_required = ("myapp.add_mymodel")
 
     def has_permission(self):
         # Write your own logic here
         return super().has_permission()
 ```
+the previous example will check the following by default:
+- The user has add permission on MyModel View
+- The user is active and is staff
 
-Quck actions by default check the `is_active=True` and `is_staff=True` thats why you must call `super().has_permission()` on overriding `has_permission()` function.
+
+**Notes**
+
+- On overriding `has_permission()` you must call `super()`
+- `permission_required` attribute can be nullable**
 
 ## 4.7- Register Quick Actions to Multiple Admin Sites
 
