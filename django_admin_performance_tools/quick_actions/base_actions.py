@@ -5,8 +5,9 @@ from re import sub
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 from django.views.generic.base import TemplateView, View
-from django.views.generic.edit import FormView
+from django.views.generic.edit import CreateView, FormView
 
 # First Party Imports
 from django_admin_performance_tools.permissions import StafUserPermissionRequiredMixin
@@ -92,7 +93,8 @@ class TemplateViewQuickAction(BaseAction, TemplateView):
 class AbstractFormViewQuickAction(BaseAction):
     """An abstract class for form actions"""
 
-    submit_button_value = "Go"
+    template_name = "admin/quick_actions/form_view_quick_action.html"
+    submit_button_value = _("Go")
     success_url = None
 
     def get_success_url(self) -> str:
@@ -111,7 +113,11 @@ class AbstractFormViewQuickAction(BaseAction):
 class FormViewQuickAction(AbstractFormViewQuickAction, FormView):
     """An action class to be inherited when initializing an action to render a form"""
 
-    template_name = "admin/quick_actions/form_view_quick_action.html"
+
+class CreateViewQuickAction(AbstractFormViewQuickAction, CreateView):
+    """An action class to be inherited when initializing an action to render a model form to craete an instance"""
+
+    submit_button_value = _("Create")
 
 
 class WizardFormViewQuickAction(AbstractFormViewQuickAction):
@@ -119,8 +125,9 @@ class WizardFormViewQuickAction(AbstractFormViewQuickAction):
 
     template_name = "admin/quick_actions/wizard_form_view_quick_action.html"
 
+    def post(self, request, *args, **kwargs):
+        bypass_success_message = self.steps.current != self.steps.last
+        return super().post(request=request, bypass_success_message=bypass_success_message, *args, **kwargs)
+
     def done(self, form_list, **kwargs):
-        success_message = self.get_post_success_message()
-        if success_message:
-            messages.success(request=self.request, message=success_message)
         return redirect(self.get_success_url())

@@ -1,1 +1,8 @@
-from .base_actions import QuickAction, FormViewQuickAction, TemplateViewQuickAction, WizardFormViewQuickAction
+from .base_actions import (
+    AbstractFormViewQuickAction,
+    QuickAction,
+    FormViewQuickAction,
+    TemplateViewQuickAction,
+    WizardFormViewQuickAction,
+    CreateViewQuickAction,
+)

@@ -28,16 +28,19 @@
     {% endif %}
 
     {% if is_quick_actions_dropdown_visible %}
-        <select name="quick_actions" onchange="location=this.value">
-            <option disabled selected> Quick Actions </option>
-            {% actions_list request name as quick_actions_list %}
-            {% for action in quick_actions_list%}
-            {% build_admin_url action.get_path_name as action_url%}
-            <option value="{% url action_url %}">
-                {{action.get_name}}</a>
-            </option>
-            {% endfor %}
-        </select>
+        {% actions_list request name as quick_actions_list %}
+        {% if quick_actions_list %}
+            <select name="quick_actions" onchange="location=this.value">
+                <option disabled selected> Quick Actions </option>
+                {% for action in quick_actions_list%}
+                {% build_admin_url action.get_path_name as action_url%}
+                <option value="{% url action_url %}">
+                    {{action.get_name}}</a>
+                </option>
+                {% endfor %}
+            </select>
+        {% endif %}
+
     {% endif %}
 
 {% endblock %}

@@ -55,6 +55,24 @@ INSTALLED_APPS = [
 ```
 **Must be added on the top of the list**
 
+
+in `settings.py` update TEMPLATES
+```python
+
+TEMPLATES = [
+    {
+        ...
+        'DIRS': ["templates"],
+        'OPTIONS': {
+            'context_processors': [
+                ...
+                "django_admin_performance_tools.context_processors.settings",
+            ],
+        },
+    },
+]
+```
+
 ---
 
 # 4- Quick Actions
@@ -79,22 +97,6 @@ INSTALLED_APPS = [
 ]
 ```
 
-in `settings.py` update TEMPLATES
-```python
-
-TEMPLATES = [
-    {
-        ...
-        'DIRS': ["templates"],
-        'OPTIONS': {
-            'context_processors': [
-                ...
-                "django_admin_performance_tools.context_processors.settings",
-            ],
-        },
-    },
-]
-```
 
 ![Alt text](/docs/images/quick_actions_dropdown.gif?raw=true "Quick Actions Dropdown")
 
@@ -112,6 +114,11 @@ from django_admin_performance_tools.quick_actions.registry import register_quick
 class FormAction(FormViewQuickAction):
     name = "My Form Action"
     form_class = MyForm
+
+    def post(self, request, *args, **kwargs):
+        # Write your logic here
+        return super().post(request, *args, **kwargs)
+
 ```
 
 -To customize submit button name, you can set `submit_button_value` attribute in the `FormAction` class
@@ -119,7 +126,42 @@ class FormAction(FormViewQuickAction):
 -To customize success redirection of the form you can set `success_url` attribute or override `get_success_url` function.
 
 
-## 4.1- WizardFormViewQuickAction
+## 4.2- CreateViewQuickAction
+
+Create View Quick Action is used to create an action to render a model form (It is implemented on top of django CreateView)
+
+**Example:**
+
+```python
+from django import forms
+from django_admin_performance_tools.quick_actions import CreateViewQuickAction
+from django_admin_performance_tools.quick_actions.registry import register_quick_action
+
+from .models import MyModel
+
+
+class MyModelForm(forms.ModelForm):
+
+    class Meta:
+        model = MyModel
+        fields = "__all__"
+
+
+@register_quick_action()
+class CreateFormAction(FormViewQuickAction):
+    name = "My Craete Form Action"
+    model = model
+    fields = ["name"]
+    form_class = MyModelForm
+
+```
+
+-To customize submit button name, you can set `submit_button_value` attribute in the `CreateFormAction` class
+
+-To customize success redirection of the form you can set `success_url` attribute or override `get_success_url` function.
+
+
+## 4.3- WizardFormViewQuickAction
 
 Wizard Form View Quick Action is implemented on top of [django-formtools][django-formtools] library, and it is used to create an action to render a wizard form.
 
@@ -168,7 +210,7 @@ And that is it
 
 -To customize `done()` function redirection you can set `success_url` attribute or override `get_success_url` function.
 
-## 4.2- TemplateViewQuickAction
+## 4.4- TemplateViewQuickAction
 
 Template View Quick Action is used to create an action to render a template (It is implemented on top of django TemplateView)
 
@@ -197,7 +239,7 @@ class TemplateAction(TemplateViewQuickAction):
 {% endblock %}
 ```
 
-## 4.3- Abstract QuickAction
+## 4.5- Abstract QuickAction
 
 QuickAction is used to create a custom action, that means you will've to implement `get()`, `post()`, `put()`, or `delete()` yourself (It is implemented on top of django View)
 
@@ -238,7 +280,7 @@ class CustomAction(QuickAction):
 You can override `get_context_data()` function to pass extra context values
 
 
-## 4.4- Control who can see the actions
+## 4.6- Control who can see the actions
 
 You can override `has_permission()` function to control who can see the actions
 
@@ -260,7 +302,7 @@ class TemplateAction(TemplateViewQuickAction):
 
 Quck actions by default check the `is_active=True` and `is_staff=True` thats why you must call `super().has_permission()` on overriding `has_permission()` function.
 
-## 4.5- Register Quick Actions to Multiple Admin Sites
+## 4.7- Register Quick Actions to Multiple Admin Sites
 
 `@register_quick_action()` decorator register the action to all defained admin sites, so if you need to register an action to a specific site you can pass `sites=[site1, site2, site3]` to the decorator
 
@@ -283,7 +325,7 @@ class TemplateAction(TemplateViewQuickAction):
         return super().has_permission()
 ```
 
-## 4.6- Redirect Success Messages
+## 4.8- Redirect Success Messages
 
 You can define messges to be displayed to the user after `post()`, `put()`, or `delete()`
 
