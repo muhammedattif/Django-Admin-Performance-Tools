@@ -102,6 +102,19 @@ INSTALLED_APPS = [
 ![Alt text](/docs/images/quick_actions_dropdown.gif?raw=true "Quick Actions Dropdown")
 🚀🚀
 
+What if you already implemented your own Admin site? all you've to do is to inherit from `AbstractAdminSiteMixin`
+
+**Example:**
+
+```python
+from django_admin_performance_tools.sites import AbstractAdminSiteMixin
+
+
+class YourAdmin(AbstractAdminSiteMixin, AdminSite):
+    """Your Admin Site"""
+```
+by doing that you don't need to replace your admin site in `INSTALLED_APPS`
+
 ## 4.1- FormViewQuickAction
 
 Form View Quick Action is used to create an action to render a form (It is implemented on top of django FormView)

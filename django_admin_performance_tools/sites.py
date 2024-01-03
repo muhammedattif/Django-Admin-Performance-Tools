@@ -7,7 +7,7 @@ from django.contrib.admin.apps import AdminConfig
 from django.urls import path
 
 
-class AbstractAdminSite(AdminSite):
+class AbstractAdminSiteMixin:
     """AbstractAdminSite"""
 
     def each_context(self, request):
@@ -43,5 +43,5 @@ class MainAdminConfig(AdminConfig):
     default_site = "django_admin_performance_tools.sites.MainAdmin"
 
 
-class MainAdmin(AbstractAdminSite):
+class MainAdmin(AbstractAdminSiteMixin, AdminSite):
     """Main Admin Site"""
