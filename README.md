@@ -82,7 +82,7 @@ Quick Actions is a new feature that allows you to take actions quickly from the 
 -   It is not attached to any model
 -   Actions acts like views but only supports (`POST`, `GET`) http methods
 -   Support permissions, so you can write your own logic to control who can see the action
--   Form View Action is introduced to enables you to create an action to render any form (It is implemented on top of django FormView)
+-   Form View Action is introduced to enables you to create an action to render any form (It is implemented on top of django FormView and CreateView)
 -   Wizard Form View Action is introduced to enables you to create multi-step forms (It is implemented on top of django-formtools)
 -   Template View Action is introduced to enables you to render your own templates
 -   Base View Action is introduced to enables you to create customized actions as you want
