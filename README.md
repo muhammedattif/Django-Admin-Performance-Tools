@@ -80,7 +80,7 @@ TEMPLATES = [
 
 Quick Actions is a new feature that allows you to take actions quickly from the admin home page, it is the same as actions in the model admin page, but the main differences are:
 -   It is not attached to any model
--   Actions acts like views and support all http methods (`POST`, `GET`, `PUT`, `DELETE`)
+-   Actions acts like views but only supports (`POST`, `GET`) http methods
 -   Support permissions, so you can write your own logic to control who can see the action
 -   Form View Action is introduced to enables you to create an action to render any form (It is implemented on top of django FormView)
 -   Wizard Form View Action is introduced to enables you to create multi-step forms (It is implemented on top of django-formtools)
