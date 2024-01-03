@@ -896,6 +896,11 @@ from django_admin_performance_tools.admin import (
     AbstractTabularInline
 )
 ```
+
+**Upcomming**
+- Auto Complete filters with custome title
+- Filters with custom title
+
 ---
 
 # 9- Widgets
