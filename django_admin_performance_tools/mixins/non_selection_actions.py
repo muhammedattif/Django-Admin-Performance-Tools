@@ -67,6 +67,6 @@ class NonSelectionActionsMixin:
 
     def get_action_choices(self, request, **kwargs):
         action_choices = super().get_action_choices(request, **kwargs)
-        if not self.get_queryset(request).count() and self.non_selection_actions:
+        if self.non_selection_actions and not self.get_queryset(request).count():
             return filter(lambda action_choice: action_choice[0] in self.non_selection_actions, action_choices)
         return action_choices
