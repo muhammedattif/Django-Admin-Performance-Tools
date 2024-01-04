@@ -3,7 +3,12 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 
-def intermediate_page(form, template="admin/intermediate_pages/abstract_form_page.html", title=None):
+def intermediate_page(
+    form,
+    template="admin/intermediate_pages/abstract_form_page.html",
+    title=None,
+    success_redirect_url=None,
+):
     """a decorator function that generates an intermediate page for an action"""
 
     if not form.base_fields.get("_selected_action", None):
@@ -25,7 +30,7 @@ def intermediate_page(form, template="admin/intermediate_pages/abstract_form_pag
                 if template_form.is_valid():
                     result = action_func(self=self, request=request, queryset=queryset, submitted_form=template_form)
                     if result is not False:
-                        return HttpResponseRedirect(request.get_full_path())
+                        return HttpResponseRedirect(success_redirect_url or request.get_full_path())
 
             if template_form is None:  # has a form been submitted with errors?
                 template_form = form(initial={"_selected_action": queryset.values_list("id", flat=True)})

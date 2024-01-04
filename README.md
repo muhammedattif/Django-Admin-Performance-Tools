@@ -478,6 +478,7 @@ class MyModelAdmin(admin.ModelAdmin):
 - **form** (required): A form inheriting from `IntermediatePageForm` or `IntermediatePageModelForm` that is passed to the intermediate page template to be rendered
 - **template**: Path of an HTML template to use for rendering the intermediate page. defaults to `admin/intermediate_pages/abstract_form_page.html` that normally renders the form and shows selected objects if any
 - **title**: Custom title for the intermediate page, defaults to the action name.
+- **success_redirect_url**: URL to redirect after successful form submission defaults to the model change list page.
 
 
 ## 6.2- Non-Selection Actions
