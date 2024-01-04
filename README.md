@@ -568,6 +568,34 @@ class MyModelAdmin(admin.ModelAdmin):
     def assign_user(self, request, queryset):
         # Write your own Logic
 ```
+
+in case you want to customize `max_selection` based on the request you can pass a `function` instead of an `int` number
+
+**Example:**
+
+```python
+from django.contrib import admin
+
+from django_admin_performance_tools.decorators import check_queryset_max_selection
+
+from .models import MyModel
+
+def get_max_selection_function(request):
+    if request.user.is_superuser:
+        return 1000
+    else:
+        return 10
+
+@admin.register(MyModel)
+class MyModelAdmin(admin.ModelAdmin):
+
+    actions = ["assign_user"]
+
+    @check_queryset_max_selection(max_selection=get_max_selection_function)
+    def assign_user(self, request, queryset):
+        # Write your own Logic
+```
+
 ----
 
 # 7- Tools for admin Querysets and Filters optemization
