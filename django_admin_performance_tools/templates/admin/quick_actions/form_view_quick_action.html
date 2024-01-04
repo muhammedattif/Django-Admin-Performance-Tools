@@ -1,7 +1,6 @@
 {% extends 'admin/quick_actions/base_quick_action.html' %}
 
 {% block action_body %}
-    <h1>{{action.get_name}}</h1>
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <fieldset class="module aligned wide">

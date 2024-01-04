@@ -138,7 +138,7 @@ class FormAction(FormViewQuickAction):
 
 -To customize submit button name, you can set `submit_button_value` attribute in the `FormAction` class
 
--To customize success redirection of the form you can set `success_url` attribute or override `get_success_url` function.
+-To customize success redirection of the form you can set `success_url` attribute or override `get_success_url` function (Default is redirect to the action page).
 
 
 ## 4.2- CreateViewQuickAction
@@ -162,7 +162,7 @@ class CreateFormAction(CreateViewQuickAction):
 
 -To customize submit button name, you can set `submit_button_value` attribute in the `CreateFormAction` class
 
--To customize success redirection of the form you can set `success_url` attribute or override `get_success_url` function.
+-To customize success redirection of the form you can set `success_url` attribute or override `get_success_url` function (Default is redirect to the action page).
 
 
 ## 4.3- WizardFormViewQuickAction
@@ -212,7 +212,7 @@ And that's it 🎉
 
 -To customize last step button name, you can set `submit_button_value` attribute in the `WizardFormAction` class
 
--To customize `done()` function redirection you can set `success_url` attribute or override `get_success_url` function.
+-To customize `done()` function redirection you can set `success_url` attribute or override `get_success_url` function (Default is redirect to the action page).
 
 ## 4.4- TemplateViewQuickAction
 
@@ -238,7 +238,6 @@ class TemplateAction(TemplateViewQuickAction):
 {% extends 'admin/quick_actions/base_quick_action.html' %}
 
 {% block action_body %}
-    <h1>{{action.get_name}}</h1>
     # Write your own HTML
 {% endblock %}
 ```
@@ -303,12 +302,12 @@ the previous example will check the following by default:
 
 **Notes**
 
-- On overriding `has_permission()` you must call `super()`
-- `permission_required` attribute can be nullable**
+- On overriding `has_permission()` you must call `super()`. Default check the user `is_active=True` and `is_staff=True`
+- `permission_required` attribute default value is `None`
 
 ## 4.7- Register Quick Actions to Multiple Admin Sites
 
-`@register_quick_action()` decorator register the action to all defained admin sites, so if you need to register an action to a specific site you can pass `sites=[site1, site2, site3]` to the decorator
+`@register_quick_action()` decorator register the action to all admin sites, so if you need to register an action to a specific site you can pass `sites=[site1, site2, site3]` to the decorator
 
 **Example:**
 
@@ -333,7 +332,7 @@ class TemplateAction(TemplateViewQuickAction):
 
 You can define messges to be displayed to the user after form submission
 
-- `post_success_message` attribute is used for `post` requests and can
+- `post_success_message` attribute is used for `post` requests
 
 
 **Example:**
@@ -394,8 +393,6 @@ And that is it
 
 ![Alt text](/docs/images/languages_dropdown.png?raw=true "Languages Dropdown")
 
-
-
 ---
 
 # 6- Intermediate Pages and Model Action Tools
@@ -404,7 +401,7 @@ And that is it
 
 We introduce `Intermediate Pages` for admin actions to render a form before proceeding to the action logic. This will help if you need to pass extra params to your actions.
 
-**Example:**
+**Form Example:**
 
 ```python
 from django import forms
@@ -425,19 +422,63 @@ class MyModelAdmin(admin.ModelAdmin):
     actions = ["assign_user"]
 
     @intermediate_page(form=MyForm)
-    def assign_user(self, request, queryset):
-        user = request.data.get("user")
+    def assign_user(self, request, queryset, submitted_form):
         # Write your own Logic
+        user = submitted_form.cleaned_data.get("user")
+        queryset.update(user=user)
 ```
 
-Intermediate Pages forms can be imported from :
+
+**ModelForm Example:**
+
 ```python
-from django_admin_performance_tools.intermediate_pages.forms import IntermediatePageForm, IntermediatePageModelForm
+from django import forms
+from django.contrib import admin
+
+from django_admin_performance_tools.intermediate_pages.decorators import intermediate_page
+from django_admin_performance_tools.intermediate_pages.forms import IntermediatePageModelForm
+
+from .models import MyModel
+
+class MyForm(IntermediatePageModelForm):
+
+    class Meta:
+        model = model
+        fields = "__all__"
+
+    def clean(self) -> dict[str, Any]:
+        # Write your own Logic
+        return super().clean()
+
+    def save(self, commit: bool = ...) -> Any:
+        # Write your own Logic
+        return super().save(commit)
+
+@admin.register(MyModel)
+class MyModelAdmin(admin.ModelAdmin):
+
+    actions = ["create_object"]
+
+    @intermediate_page(form=MyForm)
+    def create_object(self, request, queryset, submitted_form):
+        # Write your own Logic
+        submitted_form.save()
 ```
 
 -**IntermediatePageForm** is implemented on top of `forms.Form`
 
 -**IntermediatePageModelForm** is implemented on top of `forms.ModelForm`
+
+**Note**
+
+`intermediate_page` decorator checks for form validity, it means that it will not continue to the action logic only if the form is valid.
+
+### 6.1.1 intermediate_page decorator params
+
+- **form** (required): A form inheriting from `IntermediatePageForm` or `IntermediatePageModelForm` that is passed to the intermediate page template to be rendered
+- **template**: Path of an HTML template to use for rendering the intermediate page. defaults to `admin/intermediate_pages/abstract_form_page.html` that normally renders the form and shows selected objects if any
+- **title**: Custom title for the intermediate page, defaults to the action name.
+
 
 ## 6.2- Non-Selection Actions
 

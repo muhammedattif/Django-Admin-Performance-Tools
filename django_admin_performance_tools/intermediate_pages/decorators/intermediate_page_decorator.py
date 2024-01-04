@@ -12,7 +12,7 @@ def intermediate_page(form, template="admin/intermediate_pages/abstract_form_pag
         )
 
     def _decorate(func):
-        def _decorated_action(self, request, queryset):
+        def _decorated_action(self, request, queryset, submitted_form=None):
             template_form = None
             action_func, action_name, template_title = self.get_action(func)
 
@@ -23,8 +23,7 @@ def intermediate_page(form, template="admin/intermediate_pages/abstract_form_pag
                     initial={"_selected_action": queryset.values_list("id", flat=True)},
                 )
                 if template_form.is_valid():
-                    setattr(request, "data", template_form.cleaned_data)
-                    result = action_func(self, request, queryset)
+                    result = action_func(self=self, request=request, queryset=queryset, submitted_form=template_form)
                     if result is not False:
                         return HttpResponseRedirect(request.get_full_path())
 

@@ -23,6 +23,7 @@ class StafUserPermissionRequiredMixin(PermissionRequiredMixin):
             permitted = self.request.user.has_perms(perms)
             if not permitted:
                 return False
+        # NOTE: This check is already done by the admin site level, but we double check it here
         if not (self.request.user.is_active and self.request.user.is_staff):
             return False
         return True
