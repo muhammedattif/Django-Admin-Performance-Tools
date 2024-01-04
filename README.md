@@ -507,7 +507,7 @@ class MyModelAdmin(NonSelectionActionsMixin, admin.ModelAdmin):
         # Write your own Logic
 ```
 
-`No-Selection` actions overrides django `ChangeList` class so if you've already override it simply you can inherits from `NoSelectionActionsChangeListMixin`
+`No-Selection` actions overrides django `ChangeList` class (to show the actions when no instances in the changelist page) so if you've already override it simply you can inherits from `NoSelectionActionsChangeListMixin`
 
 
 **Example:**
@@ -541,6 +541,8 @@ class MyModelAdmin(NonSelectionActionsMixin, admin.ModelAdmin):
             return MyChangeList
         return ChangeList
 ```
+
+![Alt text](/docs/images/non_selection_actions.gif?raw=true "Disabled Select")
 
 ## 6.3- Max Selection Count
 
@@ -986,7 +988,7 @@ from django_admin_performance_tools.admin import (
 Sometimes we may need to disable some choices of choice list fields based on who interacting with the field, for example: a super user can change status field to any choice but the staff user may have a limited options to change the status.
 
 
-![Alt text](/docs/images/disabled_select.gif?raw=true "Search Help Text")
+![Alt text](/docs/images/disabled_select.gif?raw=true "Disabled Select")
 
 
 **Setup**
