@@ -443,7 +443,7 @@ from .models import MyModel
 class MyForm(IntermediatePageModelForm):
 
     class Meta:
-        model = model
+        model = MyModel
         fields = "__all__"
 
     def clean(self) -> dict[str, Any]:
@@ -486,6 +486,7 @@ class MyModelAdmin(admin.ModelAdmin):
 The existing Django actions require at least one selected instance to proceed, so
 We introduce `Non-Selection Actions` for admin actions to proceed to the action without selecting any instances.
 
+also Django admin actions are shown if there is at least one instance, but now all non-selection actions will be shown in actions dropdown even if there is no instances in change list page (and `Delete selected models` action will be excluded)
 
 **Example:**
 
@@ -504,6 +505,41 @@ class MyModelAdmin(NonSelectionActionsMixin, admin.ModelAdmin):
 
     def assign_user(self, request, queryset):
         # Write your own Logic
+```
+
+`No-Selection` actions overrides django `ChangeList` class so if you've already override it simply you can inherits from `NoSelectionActionsChangeListMixin`
+
+
+**Example:**
+
+```python
+from django.contrib import admin
+
+from django_admin_performance_tools.mixins import NonSelectionActionsMixin, NoSelectionActionsChangeListMixin
+
+from .models import MyModel
+
+from django.contrib.admin.views.main import ChangeList
+
+class MyChangeList(NoSelectionActionsChangeListMixin, ChangeList):
+    # Your own logic
+
+@admin.register(MyModel)
+class MyModelAdmin(NonSelectionActionsMixin, admin.ModelAdmin):
+
+    actions = ["assign_user"]
+    non_selection_actions = ["assign_user"]
+
+    def assign_user(self, request, queryset):
+        # Write your own Logic
+
+    def get_changelist(self, request, **kwargs):
+        """
+        Return the ChangeList class for use on the changelist page.
+        """
+        if self.non_selection_actions:
+            return MyChangeList
+        return ChangeList
 ```
 
 ## 6.3- Max Selection Count

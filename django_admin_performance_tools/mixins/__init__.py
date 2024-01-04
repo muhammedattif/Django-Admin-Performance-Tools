@@ -2,4 +2,4 @@ from .change_select_related import AdminChangeSelectRelatedMixin, InlineChangeSe
 from .readonly_select_related import ReadonlySelectRelatedMixin
 from .list_prefetch_related import ListPrefetchRelatedMixin
 from .search_help_text import SearchHelpTextMixin
-from .non_selection_actions import NonSelectionActionsMixin
+from .non_selection_actions import NonSelectionActionsMixin, NoSelectionActionsChangeListMixin

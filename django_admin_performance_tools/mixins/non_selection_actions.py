@@ -1,5 +1,19 @@
 # Django Imports
+from django.contrib.admin.views.main import ChangeList
 from django.core.checks import Error
+from django.core.handlers.wsgi import WSGIRequest
+
+
+class NoSelectionActionsChangeListMixin:
+    """A mixin for Non-Selection Actions Change list Class"""
+
+    def get_results(self, request: WSGIRequest) -> None:
+        super().get_results(request)
+        self.show_admin_actions = True
+
+
+class NoSelectionActionsChangeList(NoSelectionActionsChangeListMixin, ChangeList):
+    """Non-Selection Actions Change list class"""
 
 
 class NonSelectionActionsMixin:
@@ -42,3 +56,17 @@ class NonSelectionActionsMixin:
                 post.setlist("_selected_action", [None])
                 request._set_post(post)
         return super().changelist_view(request, extra_context)
+
+    def get_changelist(self, request, **kwargs):
+        """
+        Return the ChangeList class for use on the changelist page.
+        """
+        if self.non_selection_actions:
+            return NoSelectionActionsChangeList
+        return ChangeList
+
+    def get_action_choices(self, request, **kwargs):
+        action_choices = super().get_action_choices(request, **kwargs)
+        if not self.get_queryset(request).count() and self.non_selection_actions:
+            return filter(lambda action_choice: action_choice[0] in self.non_selection_actions, action_choices)
+        return action_choices
