@@ -13,10 +13,11 @@ def check_queryset_max_selection(max_selection):
     def _wrapper(func):
         def _wrapped_action(self, request, queryset):
             _max_selection = max_selection if isinstance(max_selection, int) else max_selection(request)
-            if queryset.count() > _max_selection:
-                message = _("Selection limit exceeded, selection limit is {0} instance(s)").format(_max_selection)
-                self.message_user(request, message, level=messages.ERROR)
-                return
+            if _max_selection > -1:
+                if queryset.count() > _max_selection:
+                    message = _("Selection limit exceeded, selection limit is {0} instance(s)").format(_max_selection)
+                    self.message_user(request, message, level=messages.ERROR)
+                    return
             return func(self, request, queryset)
 
         return _wrapped_action

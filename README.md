@@ -569,7 +569,9 @@ class MyModelAdmin(admin.ModelAdmin):
         # Write your own Logic
 ```
 
-in case you want to customize `max_selection` based on the request you can pass a `function` instead of an `int` number
+in case you want to customize `max_selection` based on the request you can pass a `function`/`lambda` that takes `request` as an argument instead of an `int` number.
+
+if you set `max_selection` to `-1` means unlimited.
 
 **Example:**
 
@@ -580,7 +582,7 @@ from django_admin_performance_tools.decorators import check_queryset_max_selecti
 
 from .models import MyModel
 
-def get_max_selection_function(request):
+def get_max_selection(request):
     if request.user.is_superuser:
         return 1000
     else:
@@ -591,7 +593,7 @@ class MyModelAdmin(admin.ModelAdmin):
 
     actions = ["assign_user"]
 
-    @check_queryset_max_selection(max_selection=get_max_selection_function)
+    @check_queryset_max_selection(max_selection=lambda request: get_max_selection(request))
     def assign_user(self, request, queryset):
         # Write your own Logic
 ```
