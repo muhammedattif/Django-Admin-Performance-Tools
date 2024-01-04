@@ -1047,3 +1047,13 @@ Default value is `False`
 
 [github-repo]: https://github.com/muhammedattif/Django-Admin-Performance-Tools
 [django-formtools]: https://pypi.org/project/django-formtools/
+
+
+## Contributing
+
+If you are interested to fix an issue or to add new feature, you can just open a pull request.
+
+### Contributors
+<a href = "https://github.com/muhammedattif/Django-Admin-Performance-Tools/graphs/contributors">
+  <img src = "https://contrib.rocks/image?repo=muhammedattif/Django-Admin-Performance-Tools"/>
+</a>
