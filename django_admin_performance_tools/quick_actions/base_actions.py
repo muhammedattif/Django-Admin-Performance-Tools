@@ -21,9 +21,9 @@ class BaseAction(StafUserPermissionRequiredMixin):
     path_name = None
     post_success_message = None
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, bypass_success_message=False, *args, **kwargs):
         success_message = self.get_post_success_message()
-        if success_message:
+        if success_message and not bypass_success_message:
             messages.success(request=request, message=success_message)
         return super().post(request, *args, **kwargs)
 
