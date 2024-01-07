@@ -1,4 +1,5 @@
 # Python Standard Library Imports
+from posixpath import join as urljoin
 from re import sub
 
 # Django Imports
@@ -11,6 +12,8 @@ from django.views.generic.edit import CreateView, FormView
 
 # First Party Imports
 from django_admin_performance_tools.permissions import StafUserPermissionRequiredMixin
+from django_admin_performance_tools.settings import QUICK_ACTIONS_URL_PATH_PREFIX
+from django_admin_performance_tools.utils import urljoin
 
 
 class BaseAction(StafUserPermissionRequiredMixin):
@@ -38,25 +41,22 @@ class BaseAction(StafUserPermissionRequiredMixin):
     @classmethod
     def get_name(cls):
         if cls.name:
-            return cls.name
-        name = sub(r"([a-z0-9])([A-Z])", r"\1 \2", str(cls.__name__))
-        cls.name = name.replace("action", "").replace("Action", "").strip()
-        return cls.name
+            return cls.name.strip()
+        return sub(r"([a-z0-9])([A-Z])", r"\1 \2", str(cls.__name__))
 
     @classmethod
     def get_url_path(cls):
         if cls.url_path:
-            return cls.url_path
-        name = sub(r"([a-z0-9])([A-Z])", r"\1 \2", str(cls.__name__))
-        cls.url_path = name.lower().replace(" ", "-")
-        return cls.url_path
+            _url_path = cls.url_path
+        else:
+            _url_path = cls.get_name().lower().replace(" ", "-")
+        return urljoin(QUICK_ACTIONS_URL_PATH_PREFIX, _url_path)
 
     @classmethod
     def get_path_name(cls):
         if cls.path_name:
-            return cls.path_name
-        cls.path_name = cls.get_url_path()
-        return cls.path_name
+            return f"{QUICK_ACTIONS_URL_PATH_PREFIX}-{cls.path_name}"
+        return cls.get_url_path().replace("/", "-")
 
     def get_post_success_message(self):
         return self.post_success_message
@@ -106,8 +106,9 @@ class WizardFormViewQuickAction(AbstractFormViewQuickAction):
     template_name = "admin/quick_actions/wizard_form_view_quick_action.html"
 
     def post(self, request, *args, **kwargs):
-        bypass_success_message = self.steps.current != self.steps.last
-        return super().post(request=request, bypass_success_message=bypass_success_message, *args, **kwargs)
+        return super().post(
+            request=request, bypass_success_message=self.steps.current != self.steps.last, *args, **kwargs
+        )
 
     def done(self, form_list, **kwargs):
         return redirect(self.get_success_url())

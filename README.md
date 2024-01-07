@@ -344,7 +344,7 @@ from django_admin_performance_tools.quick_actions import TemplateViewQuickAction
 from django_admin_performance_tools.quick_actions.registry import register_quick_action
 from .my_sites import site2, site3
 
-@register_quick_action(sites=[admin.site, site2, site3])
+@register_quick_action()
 class TemplateAction(TemplateViewQuickAction):
     name = "My Template Action"
     template_name = "my_template.html"
@@ -360,6 +360,53 @@ class TemplateAction(TemplateViewQuickAction):
 **Notes**
 
 1- **All actions must be added/imported in admin.py as to be detected and registered.**
+
+## 4.9- URLs and Path Name
+
+`url_path` is the URL path of an action, if not set the package will create a url path dynamically from the action class's name
+
+`path_name` is the URL path name of an action, if not set the package will create a url path name dynamically from the action class's name
+
+
+**Example 1:**
+
+```python
+from django.contrib import admin
+
+from django_admin_performance_tools.quick_actions import TemplateViewQuickAction
+from django_admin_performance_tools.quick_actions.registry import register_quick_action
+from .my_sites import site2, site3
+
+@register_quick_action()
+class CreateUserTemplate(TemplateViewQuickAction):
+    name = "My Template Action"
+    template_name = "my_template.html"
+```
+
+- `url_path` value will be `www.mysite.com/admin/quick-actions/create-user-template`
+- `path_name` value will be `quick-actions-create-user-template`
+
+
+**Example 2:**
+
+```python
+from django.contrib import admin
+
+from django_admin_performance_tools.quick_actions import TemplateViewQuickAction
+from django_admin_performance_tools.quick_actions.registry import register_quick_action
+from .my_sites import site2, site3
+
+@register_quick_action()
+class CreateUserTemplate(TemplateViewQuickAction):
+    name = "My Template Action"
+    url_path = "my-template"
+    path_name = "my-template"
+    template_name = "my_template.html"
+```
+
+- `url_path` value will be `www.mysite.com/admin/quick-actions/my-template`
+- `path_name` value will be `quick-actions-my-template`
+
 
 ---
 
@@ -1067,6 +1114,14 @@ You can controll some behaves by adding the following in `settings.py`
 This will hide the Quick Actions dropdown from admin sites
 
 Default value is `False`
+
+
+**- QUICK_ACTIONS_URL_PATH_PREFIX**
+
+This is the prefix before all Quick-Actions URL paths/names
+
+Default value is `quick-actions`
+
 
 **- HIDE_LANGUAGE_DROPDOWN**
 

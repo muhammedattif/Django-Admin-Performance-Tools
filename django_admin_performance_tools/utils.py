@@ -1,4 +1,5 @@
 # Python Standard Library Imports
+from functools import reduce
 from typing import List
 
 # Django Imports
@@ -72,3 +73,11 @@ def is_changelist_page(request: HttpRequest) -> bool:
         bool: True if changelist, false if not
     """
     return request.resolver_match.view_name.endswith("changelist")
+
+
+def join_slash(a, b):
+    return a.rstrip("/") + "/" + b.lstrip("/")
+
+
+def urljoin(*args):
+    return reduce(join_slash, args) if args else ""
