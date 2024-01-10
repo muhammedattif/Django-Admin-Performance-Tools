@@ -944,7 +944,7 @@ in the previous example, if we've 100 choice in the `another_model` filter list,
 ```python
 from django.contrib import admin
 from django.contrin.auth.models import User
-from django_admin_performance_tools.mixins import FilterWithSelectRelated
+from django_admin_performance_tools.filters import FilterWithSelectRelated
 from .models import MyModel, AnotherModel
 
 
