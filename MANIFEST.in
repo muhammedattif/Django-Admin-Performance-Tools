@@ -3,3 +3,5 @@ include README.md
 recursive-include docs *
 recursive-include django_admin_performance_tools/static *
 recursive-include django_admin_performance_tools/templates *
+prune core
+prune quick
