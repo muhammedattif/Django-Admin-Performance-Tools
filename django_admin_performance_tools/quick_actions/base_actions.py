@@ -58,6 +58,10 @@ class BaseAction(StafUserPermissionRequiredMixin):
             return f"{QUICK_ACTIONS_URL_PATH_PREFIX}-{cls.path_name}"
         return cls.get_url_path().replace("/", "-")
 
+    @property
+    def admin_reverse_name(self):
+        return "admin:%s" % (self.get_path_name())
+
     def get_post_success_message(self):
         return self.post_success_message
 
@@ -80,7 +84,7 @@ class AbstractFormViewQuickAction(BaseAction):
     def get_success_url(self) -> str:
         if self.success_url:
             return self.success_url
-        return reverse_lazy("admin:{0}".format(self.path_name))
+        return reverse_lazy(self.admin_reverse_name)
 
     def get_context_data(self, **kwargs):
         super().get_context_data(**kwargs)
@@ -106,8 +110,12 @@ class WizardFormViewQuickAction(AbstractFormViewQuickAction):
     template_name = "admin/quick_actions/wizard_form_view_quick_action.html"
 
     def post(self, request, *args, **kwargs):
+        wizard_goto_step = self.request.POST.get("wizard_goto_step", None)
         return super().post(
-            request=request, bypass_success_message=self.steps.current != self.steps.last, *args, **kwargs
+            request=request,
+            bypass_success_message=self.steps.current != self.steps.last or wizard_goto_step,
+            *args,
+            **kwargs,
         )
 
     def done(self, form_list, **kwargs):

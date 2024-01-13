@@ -40,10 +40,15 @@ class Registry:
     def actions(self):
         return list(itertools.chain.from_iterable(self.sites_actions.values()))
 
-    def get_site_actions(self, site_name):
-        site_actions = self.sites_actions.get(site_name, [])
-        non_site_actions = self.sites_actions.get(NON_SITE, [])
-        return site_actions + non_site_actions
+    def get_site_actions(self, site_name, request=None):
+        site_actions = self.sites_actions.get(site_name, []) + self.sites_actions.get(NON_SITE, [])
+        if not request:
+            return site_actions
+        return [
+            action_class(request=request)
+            for action_class in site_actions
+            if action_class(request=request).has_permission()
+        ]
 
 
 def register_quick_action(sites=[]):

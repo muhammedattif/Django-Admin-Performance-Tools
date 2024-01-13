@@ -1,7 +1,8 @@
 {% extends "admin/base_site.html" %}
-{% load i18n static admin_utils %}
+{% load i18n static %}
 
 {% block extrastyle %}
+    {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{% static 'django_admin_performance_tools/css/style.css' %}"/>
 {% endblock %}
 
@@ -28,24 +29,19 @@
     {% endif %}
 
     {% if is_quick_actions_dropdown_visible %}
-        {% actions_list request name as quick_actions_list %}
         {% if quick_actions_list %}
-            <select name="quick_actions" onchange="location=this.value">
-                <option disabled selected> Quick Actions </option>
-                {% for action in quick_actions_list%}
-                {% build_admin_url action.get_path_name as action_url%}
-                <option value="{% url action_url %}">
-                    {{action.get_name}}</a>
-                </option>
-                {% endfor %}
-            </select>
+            <div id="quick-actions">
+                <select name="quick_actions" onchange="location=this.value">
+                    <option disabled selected> Quick Actions </option>
+                    {% for action in quick_actions_list%}
+                    <option value="{% url action.admin_reverse_name %}">
+                        {{action.get_name}}</a>
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
         {% endif %}
 
     {% endif %}
 
-{% endblock %}
-
-
-{% block footer %}
-    <script src="{% static 'django_admin_performance_tools/js/script.js' %}"></script>
 {% endblock %}

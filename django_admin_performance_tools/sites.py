@@ -11,8 +11,11 @@ class AbstractAdminSiteMixin:
     """AbstractAdminSite"""
 
     def each_context(self, request):
+        # First Party Imports
+        from django_admin_performance_tools.quick_actions.registry import _registry
+
         context = super().each_context(request)
-        context["name"] = self.name
+        context["quick_actions_list"] = _registry.get_site_actions(request=request, site_name=self.name)
         return context
 
     def get_urls(self):

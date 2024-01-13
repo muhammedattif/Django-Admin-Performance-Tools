@@ -1,5 +1,5 @@
 {% extends 'admin/base_site.html' %}
-{% load i18n static admin_utils %}
+{% load i18n static %}
 {% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static "admin/css/forms.css" %}">{% endblock %}
 
 {% block title %}{{action.get_name}}{% endblock %}
@@ -7,8 +7,7 @@
 {% block breadcrumbs %}
 <div class="breadcrumbs">
 <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
-{% build_admin_url action.get_path_name as action_url%}
-&rsaquo; <a href={% url action_url %}>{{action.get_name}}</a>
+&rsaquo; <a href={% url action.admin_reverse_name %}>{{action.get_name}}</a>
 </div>
 {% endblock %}
 
